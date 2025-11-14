@@ -116,7 +116,7 @@ async def check_user_payment(chat_id: str, bot: Bot) -> bool:
     # Проверяем транзакции на наличие выплаты
     for transaction in transactions:
         payment_amount = check_transaction_is_payment(transaction)
-        print(transaction)
+
         if payment_amount:
             # Выплата найдена!
             mark_payment_received(int(chat_id), payment_period, payment_amount)
@@ -152,7 +152,6 @@ async def payment_checker_task(bot: Bot):
                 users = get_all_users()
 
                 # Проверяем каждого пользователя
-                print(users)
                 for chat_id in users:
                     try:
                         await check_user_payment(chat_id, bot)

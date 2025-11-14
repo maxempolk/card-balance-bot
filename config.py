@@ -1,25 +1,32 @@
 """
 Конфигурационный файл с глобальными настройками бота
+Загружает переменные из .env файла
 """
 
+import os
+from dotenv import load_dotenv
+
+# Загружаем переменные из .env файла
+load_dotenv()
+
 # Telegram Bot
-BOT_TOKEN = "8439983396:AAECjzrcPZxu4IulJranmXOG1m3ybLlj66A"
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 
 # Database
-DB_FILE = "cards_db.json"
+DB_FILE = os.getenv("DB_FILE", "cards_db.json")
 
 # DNB API
-API_URL = "https://api-open.ccp.dnb.no/v1/kronekort/balance"
-API_TRACE_ID = "b3e4d7f2-c5a8-41e6-8b1a-7f9c2e5d3a4b"
-API_CHANNEL = "BMPULS"
+API_URL = os.getenv("API_URL", "https://api-open.ccp.dnb.no/v1/kronekort/balance")
+API_TRACE_ID = os.getenv("API_TRACE_ID", "")
+API_CHANNEL = os.getenv("API_CHANNEL", "BMPULS")
 
 # Card validation
-CARD_NUMBER_LENGTH = 12
+CARD_NUMBER_LENGTH = int(os.getenv("CARD_NUMBER_LENGTH", "12"))
 
 # Payment checking
-PAYMENT_DATES = [1, 16]  # Даты выплат каждого месяца
-PAYMENT_CHECK_DAYS_BEFORE = 2  # За сколько дней до выплаты начинать проверки
-PAYMENT_CHECK_DAYS_AFTER = 2  # Сколько дней после выплаты продолжать проверки
-PAYMENT_CHECK_INTERVAL_HOURS = 1  # Интервал проверки в часах
-PAYMENT_MIN_AMOUNT = 1000  # Минимальная сумма для определения выплаты
-NORWAY_TIMEZONE = "Europe/Oslo"  # Временная зона Норвегии
+PAYMENT_DATES = [int(x.strip()) for x in os.getenv("PAYMENT_DATES", "1,16").split(",")]
+PAYMENT_CHECK_DAYS_BEFORE = int(os.getenv("PAYMENT_CHECK_DAYS_BEFORE", "2"))
+PAYMENT_CHECK_DAYS_AFTER = int(os.getenv("PAYMENT_CHECK_DAYS_AFTER", "2"))
+PAYMENT_CHECK_INTERVAL_HOURS = int(os.getenv("PAYMENT_CHECK_INTERVAL_HOURS", "1"))
+PAYMENT_MIN_AMOUNT = int(os.getenv("PAYMENT_MIN_AMOUNT", "1000"))
+NORWAY_TIMEZONE = os.getenv("NORWAY_TIMEZONE", "Europe/Oslo")

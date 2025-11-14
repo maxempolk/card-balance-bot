@@ -11,3 +11,9 @@ wheels/
 
 # claude
 claude
+
+# Environment variables
+.env
+
+# Database
+cards_db.json
