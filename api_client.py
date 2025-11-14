@@ -1,7 +1,7 @@
 import aiohttp
 from typing import Optional
 
-API_URL = "https://api-open.ccp.dnb.no/v1/kronekort/balance"
+from config import API_URL, API_TRACE_ID, API_CHANNEL
 
 async def get_card_balance(card_number: str) -> Optional[float]:
     """
@@ -14,8 +14,8 @@ async def get_card_balance(card_number: str) -> Optional[float]:
         Баланс карты или None в случае ошибки
     """
     headers = {
-        "X-Dnbapi-Trace-Id": "b3e4d7f2-c5a8-41e6-8b1a-7f9c2e5d3a4b",
-        "X-Dnbapi-Channel": "BMPULS",
+        "X-Dnbapi-Trace-Id": API_TRACE_ID,
+        "X-Dnbapi-Channel": API_CHANNEL,
         "Content-Type": "application/json"
     }
 

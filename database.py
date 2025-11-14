@@ -3,7 +3,7 @@ import os
 from typing import Optional
 from datetime import datetime
 
-DB_FILE = "cards_db.json"
+from config import DB_FILE
 
 def load_db() -> dict:
     """Загружает базу данных из JSON файла"""

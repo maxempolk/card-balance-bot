@@ -7,8 +7,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from database import get_card_number, set_card_number, add_balance_history
 from api_client import get_card_balance, get_card_transactions
-
-TOKEN = r"8439983396:AAECjzrcPZxu4IulJranmXOG1m3ybLlj66A"
+from config import BOT_TOKEN, CARD_NUMBER_LENGTH
 
 dp = Dispatcher()
 
@@ -40,7 +39,7 @@ async def command_start_handler(message: Message, state: FSMContext):
     else:
         await message.answer(
             "Привет! Я бот для проверки баланса карты DNB.\n\n"
-            "Пожалуйста, введите номер вашей карты (12 цифр):"
+            f"Пожалуйста, введите номер вашей карты ({CARD_NUMBER_LENGTH} цифр):"
         )
         await state.set_state(CardStates.waiting_for_card)
 
@@ -57,9 +56,9 @@ async def process_card_number(message: Message, state: FSMContext):
         await message.answer("Номер карты должен содержать только цифры. Попробуйте еще раз:")
         return
 
-    if len(card_number) != 12:
+    if len(card_number) != CARD_NUMBER_LENGTH:
         await message.answer(
-            f"Номер карты должен содержать 12 цифр. Вы ввели {len(card_number)} цифр.\n"
+            f"Номер карты должен содержать {CARD_NUMBER_LENGTH} цифр. Вы ввели {len(card_number)} цифр.\n"
             "Попробуйте еще раз:"
         )
         return
@@ -128,7 +127,7 @@ async def get_balance_handler(message: Message):
 #         )
 
 async def main() -> None:
-    bot = Bot(token=TOKEN)
+    bot = Bot(token=BOT_TOKEN)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
