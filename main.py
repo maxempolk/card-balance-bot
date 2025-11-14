@@ -9,6 +9,7 @@ from database import get_card_number, set_card_number, add_balance_history
 from api_client import get_card_balance, get_card_transactions
 from config import BOT_TOKEN, CARD_NUMBER_LENGTH
 from payment_checker import payment_checker_task
+from messages import Messages, ButtonTexts
 
 dp = Dispatcher()
 
@@ -19,8 +20,8 @@ class CardStates(StatesGroup):
 def get_main_keyboard():
     keyboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Получить баланс")],
-            # [KeyboardButton(text="Получить последние 5 транзакций")]
+            [KeyboardButton(text=ButtonTexts.GET_BALANCE)],
+            # [KeyboardButton(text=ButtonTexts.GET_TRANSACTIONS)]
         ],
         resize_keyboard=True
     )
@@ -33,35 +34,28 @@ async def command_start_handler(message: Message, state: FSMContext):
 
     if card_number:
         await message.answer(
-            f"Привет! У вас уже сохранена карта: {card_number}\n\n"
-            "Выберите действие с помощью кнопок ниже:",
+            Messages.welcome_with_card(card_number),
             reply_markup=get_main_keyboard()
         )
     else:
-        await message.answer(
-            "Привет! Я бот для проверки баланса карты DNB.\n\n"
-            f"Пожалуйста, введите номер вашей карты ({CARD_NUMBER_LENGTH} цифр):"
-        )
+        await message.answer(Messages.welcome_new_user())
         await state.set_state(CardStates.waiting_for_card)
 
 @dp.message(CardStates.waiting_for_card)
 async def process_card_number(message: Message, state: FSMContext):
     if not message.text:
-        await message.answer("Пожалуйста, отправьте текстовое сообщение с номером карты.")
+        await message.answer(Messages.SEND_TEXT_MESSAGE)
         return
 
     card_number = message.text.strip()
 
     # Проверка длины номера карты (должно быть 12 цифр)
     if not card_number.isdigit():
-        await message.answer("Номер карты должен содержать только цифры. Попробуйте еще раз:")
+        await message.answer(Messages.CARD_ONLY_DIGITS)
         return
 
     if len(card_number) != CARD_NUMBER_LENGTH:
-        await message.answer(
-            f"Номер карты должен содержать {CARD_NUMBER_LENGTH} цифр. Вы ввели {len(card_number)} цифр.\n"
-            "Попробуйте еще раз:"
-        )
+        await message.answer(Messages.card_wrong_length(len(card_number)))
         return
 
     # Сохраняем номер карты, обрезав последнюю цифру
@@ -69,36 +63,29 @@ async def process_card_number(message: Message, state: FSMContext):
     set_card_number(message.chat.id, card_number_trimmed)
 
     await message.answer(
-        f"Номер карты {card_number} успешно сохранен!\n\n"
-        "Теперь вы можете использовать кнопки ниже для получения информации:",
+        Messages.card_saved_success(card_number),
         reply_markup=get_main_keyboard()
     )
     await state.clear()
 
-@dp.message(F.text == "Получить баланс")
+@dp.message(F.text == ButtonTexts.GET_BALANCE)
 async def get_balance_handler(message: Message):
     card_number = get_card_number(message.chat.id)
 
     if not card_number:
-        await message.answer(
-            "Сначала нужно сохранить номер карты.\n"
-            "Используйте команду /start"
-        )
+        await message.answer(Messages.NO_CARD_SAVED)
         return
 
-    status_message = await message.answer("Получаю баланс...")
+    status_message = await message.answer(Messages.GETTING_BALANCE)
 
     balance = await get_card_balance(card_number)
 
     if balance is not None:
         # Сохраняем баланс в историю
         add_balance_history(message.chat.id, balance)
-        await status_message.edit_text(f"Баланс вашей карты: {balance} NOK")
+        await status_message.edit_text(Messages.balance_result(balance))
     else:
-        await status_message.edit_text(
-            "Не удалось получить баланс. Проверьте правильность номера карты.\n"
-            "Используйте /start чтобы ввести номер заново."
-        )
+        await status_message.edit_text(Messages.BALANCE_ERROR)
 
 # @dp.message(F.text == "Получить последние 5 транзакций")
 # async def get_transactions_handler(message: Message):

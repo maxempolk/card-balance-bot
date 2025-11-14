@@ -24,6 +24,7 @@ from database import (
     mark_payment_received
 )
 from api_client import get_card_transactions
+from messages import Messages
 
 
 def get_norway_time() -> datetime:
@@ -38,7 +39,6 @@ def get_current_payment_period() -> Optional[str]:
     Возвращает строку вида "YYYY-MM-DD" для даты выплаты или None
     """
     now = get_norway_time()
-    current_day = now.day
 
     # Определяем, к какому периоду выплат мы ближе
     for payment_date in PAYMENT_DATES:
@@ -125,7 +125,7 @@ async def check_user_payment(chat_id: str, bot: Bot) -> bool:
             try:
                 await bot.send_message(
                     chat_id=int(chat_id),
-                    text=f"Выплата получена! Сумма: {payment_amount} NOK"
+                    text=Messages.payment_received(payment_amount)
                 )
             except Exception as e:
                 print(f"Error sending notification to {chat_id}: {e}")
