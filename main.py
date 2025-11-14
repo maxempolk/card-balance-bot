@@ -8,6 +8,7 @@ from aiogram.fsm.state import State, StatesGroup
 from database import get_card_number, set_card_number, add_balance_history
 from api_client import get_card_balance, get_card_transactions
 from config import BOT_TOKEN, CARD_NUMBER_LENGTH
+from payment_checker import payment_checker_task
 
 dp = Dispatcher()
 
@@ -128,6 +129,10 @@ async def get_balance_handler(message: Message):
 
 async def main() -> None:
     bot = Bot(token=BOT_TOKEN)
+
+    # Запускаем задачу проверки выплат в фоне
+    asyncio.create_task(payment_checker_task(bot))
+
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

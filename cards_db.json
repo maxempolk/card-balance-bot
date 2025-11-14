@@ -1,24 +1,13 @@
 {
   "581337209": {
     "card_number": "56063556934",
-    "balance_history": [
-      {
-        "date": "2025-11-14 22:52:58",
-        "balance": 1748.64
-      },
-      {
-        "date": "2025-11-14 23:05:14",
-        "balance": 1748.64
+    "balance_history": [],
+    "payments": {
+      "2025-11-16": {
+        "received": true,
+        "timestamp": "2025-11-14 23:41:58",
+        "amount": 2091.45
       }
-    ]
-  },
-  "575926594": {
-    "card_number": "56063581602",
-    "balance_history": [
-      {
-        "date": "2025-11-14 22:53:52",
-        "balance": 1590.45
-      }
-    ]
+    }
   }
 }

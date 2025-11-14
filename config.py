@@ -15,3 +15,11 @@ API_CHANNEL = "BMPULS"
 
 # Card validation
 CARD_NUMBER_LENGTH = 12
+
+# Payment checking
+PAYMENT_DATES = [1, 16]  # Даты выплат каждого месяца
+PAYMENT_CHECK_DAYS_BEFORE = 2  # За сколько дней до выплаты начинать проверки
+PAYMENT_CHECK_DAYS_AFTER = 2  # Сколько дней после выплаты продолжать проверки
+PAYMENT_CHECK_INTERVAL_HOURS = 1  # Интервал проверки в часах
+PAYMENT_MIN_AMOUNT = 1000  # Минимальная сумма для определения выплаты
+NORWAY_TIMEZONE = "Europe/Oslo"  # Временная зона Норвегии

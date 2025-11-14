@@ -100,3 +100,47 @@ def delete_card_number(chat_id: int) -> None:
     if str(chat_id) in db:
         del db[str(chat_id)]
         save_db(db)
+
+def mark_payment_received(chat_id: int, payment_date: str, amount: float) -> None:
+    """Отмечает, что пользователь получил выплату за текущий период"""
+    db = load_db()
+    user_data = db.get(str(chat_id))
+
+    if not user_data:
+        return
+
+    # Если старый формат, мигрируем
+    if isinstance(user_data, str):
+        card_number = user_data
+        user_data = {
+            "card_number": card_number,
+            "balance_history": []
+        }
+
+    # Добавляем информацию о выплате
+    if "payments" not in user_data:
+        user_data["payments"] = {}
+
+    user_data["payments"][payment_date] = {
+        "received": True,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "amount": amount
+    }
+
+    db[str(chat_id)] = user_data
+    save_db(db)
+
+def is_payment_received(chat_id: int, payment_date: str) -> bool:
+    """Проверяет, была ли получена выплата за указанный период"""
+    db = load_db()
+    user_data = db.get(str(chat_id))
+
+    if isinstance(user_data, dict):
+        payments = user_data.get("payments", {})
+        return payments.get(payment_date, {}).get("received", False)
+    return False
+
+def get_all_users() -> list:
+    """Возвращает список всех chat_id пользователей"""
+    db = load_db()
+    return list(db.keys())
