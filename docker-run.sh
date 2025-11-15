@@ -43,7 +43,7 @@ check_env_file() {
 start() {
     print_info "Starting DNB Balance Bot..."
     check_env_file
-    docker-compose up -d
+    docker compose up -d
     print_info "Bot started successfully!"
     print_info "Use './docker-run.sh logs' to view logs"
 }
@@ -51,34 +51,34 @@ start() {
 # Остановка контейнера
 stop() {
     print_info "Stopping DNB Balance Bot..."
-    docker-compose down
+    docker compose down
     print_info "Bot stopped successfully!"
 }
 
 # Перезапуск контейнера
 restart() {
     print_info "Restarting DNB Balance Bot..."
-    docker-compose restart
+    docker compose restart
     print_info "Bot restarted successfully!"
 }
 
 # Просмотр логов
 logs() {
-    docker-compose logs -f bot
+    docker compose logs -f bot
 }
 
 # Пересборка образа
 rebuild() {
     print_info "Rebuilding Docker image..."
-    docker-compose down
-    docker-compose build --no-cache
-    docker-compose up -d
+    docker compose down
+    docker compose build --no-cache
+    docker compose up -d
     print_info "Bot rebuilt and started successfully!"
 }
 
 # Статус контейнера
 status() {
-    docker-compose ps
+    docker compose ps
 }
 
 # Просмотр использования ресурсов
@@ -93,7 +93,7 @@ clean() {
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_info "Cleaning up..."
-        docker-compose down --rmi all
+        docker compose down --rmi all
         print_info "Cleanup completed!"
     else
         print_info "Cleanup cancelled"
