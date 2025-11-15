@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dnb-balance-bot
+
+    # Политика перезапуска
+    restart: unless-stopped
+
+    # Ограничения ресурсов для слабого железа
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'      # Максимум 50% одного ядра CPU
+          memory: 256M     # Максимум 256MB RAM
+        reservations:
+          cpus: '0.1'      # Минимум 10% одного ядра CPU
+          memory: 64M      # Минимум 64MB RAM
+
+    # Переменные окружения из .env файла
+    env_file:
+      - .env
+
+    # Монтируем volume для сохранения базы данных
+    volumes:
+      - ./cards_db.json:/app/cards_db.json
+
+    # Логирование с ротацией для экономии места
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
